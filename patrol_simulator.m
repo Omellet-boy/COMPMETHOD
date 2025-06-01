@@ -39,7 +39,7 @@ quantity_rng = rng(2*num_vehicles+1:3*num_vehicles);
 refuel_rng = rng(3*num_vehicles+1:end);
 
 inter_arrival_time = ceil(1 + arrival_rng * 3); % normal hour
-%inter_arrival_time = ones(1, num_vehicles); % peak hour
+%inter_arrival_time = ones(1, num_vehicles);   % peak hour
 arrival_time = cumsum([0, inter_arrival_time(2:end)]);
 
 % === SIMULATION STATE ===
@@ -59,7 +59,8 @@ for i = 1:num_vehicles
 
     quantity = ceil(20 + quantity_rng(i) * 30); % 20–50L
     price = quantity * petrol_prices(type);
-    refuel_time = ceil(4 + refuel_rng(i) * 6); % 4–10 mins realistic refueling
+    refuel_rate = 10; % in Leters
+    refuel_time = ceil(quantity / refuel_rate);
     linger_time = ceil(rand() * 6); % 0–5 mins loitering time
     total_time = refuel_time + linger_time;
     arrive = arrival_time(i);
@@ -116,9 +117,9 @@ end
 
 
 % === EVALUATION ===
-avg_wait = mean(vehicle_data(:,11));
-avg_system = mean(vehicle_data(:,12));
-prob_wait = sum(vehicle_data(:,11) > 0) / num_vehicles;
+avg_wait = mean(vehicle_data(:,13));
+avg_system = mean(vehicle_data(:,10));
+prob_wait = sum(vehicle_data(:,13) > 0) / num_vehicles;
 
 printf("\n=== Simulation Evaluation ===\n");
 printf("Average Waiting Time: %.2f minutes\n", avg_wait);
